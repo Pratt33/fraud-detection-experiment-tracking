@@ -6,7 +6,8 @@ import numpy as np
 import pickle
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.metrics import confusion_matrix, classification_report, roc_curve, precision_recall_curve
+from sklearn.metrics import confusion_matrix, classification_report, roc_curve, precision_recall_curve, f1_score
+from dvclive import Live
 
 # Step 1: Load test data and models
 
@@ -29,38 +30,61 @@ print(f"Loaded {len(models)} models")
 print(f"Test data: {len(X_test):,} transactions ({y_test.sum()} frauds)")
 
 # Step 2: Detailed evaluation for each model
-for model_name, model in models.items():
-    print(f"\n{'='*50}")
-    print(f"{model_name.upper()} DETAILED RESULTS")
-    print(f"{'='*50}")
-    
-    # Make predictions
-    y_pred = model.predict(X_test)
-    y_pred_proba = model.predict_proba(X_test)[:, 1]
-    
-    # Confusion Matrix
-    cm = confusion_matrix(y_test, y_pred)
-    tn, fp, fn, tp = cm.ravel()
-    
-    print(f"Confusion Matrix:")
-    print(f"  True Negatives (Correct Normal):  {tn:,}")
-    print(f"  False Positives (Wrong Fraud):    {fp:,}")
-    print(f"  False Negatives (Missed Fraud):   {fn:,}")
-    print(f"  True Positives (Caught Fraud):    {tp:,}")
-    
-    # Business Impact Metrics
-    print(f"\nBusiness Impact:")
-    if tp + fn > 0:  # Avoid division by zero
-        fraud_catch_rate = tp / (tp + fn) * 100
-        print(f"  Fraud Catch Rate: {fraud_catch_rate:.1f}% ({tp} out of {tp + fn} frauds caught)")
-    
-    if fp + tn > 0:
-        false_alarm_rate = fp / (fp + tn) * 100
-        print(f"  False Alarm Rate: {false_alarm_rate:.1f}% ({fp} normal transactions flagged)")
-    
-    # Classification Report
-    print(f"\nDetailed Classification Report:")
-    print(classification_report(y_test, y_pred, target_names=['Normal', 'Fraud']))
+with Live() as live:
+    for model_name, model in models.items():
+        print(f"\n{'='*50}")
+        print(f"{model_name.upper()} DETAILED RESULTS")
+        print(f"{'='*50}")
+        
+        # Make predictions
+        y_pred = model.predict(X_test)
+        y_pred_proba = model.predict_proba(X_test)[:, 1]
+        
+        # Confusion Matrix
+        cm = confusion_matrix(y_test, y_pred)
+        tn, fp, fn, tp = cm.ravel()
+        
+        print(f"Confusion Matrix:")
+        print(f"  True Negatives (Correct Normal):  {tn:,}")
+        print(f"  False Positives (Wrong Fraud):    {fp:,}")
+        print(f"  False Negatives (Missed Fraud):   {fn:,}")
+        print(f"  True Positives (Caught Fraud):    {tp:,}")
+        
+        # Business Impact Metrics
+        print(f"\nBusiness Impact:")
+        if tp + fn > 0:  # Avoid division by zero
+            fraud_catch_rate = tp / (tp + fn) * 100
+            print(f"  Fraud Catch Rate: {fraud_catch_rate:.1f}% ({tp} out of {tp + fn} frauds caught)")
+        
+        if fp + tn > 0:
+            false_alarm_rate = fp / (fp + tn) * 100
+            print(f"  False Alarm Rate: {false_alarm_rate:.1f}% ({fp} normal transactions flagged)")
+        
+        # Classification Report
+        print(f"\nDetailed Classification Report:")
+        print(classification_report(y_test, y_pred, target_names=['Normal', 'Fraud']))
+
+        # Calculate and log evaluation metrics with model prefix
+        test_accuracy = (y_pred == y_test).mean()
+        test_f1 = f1_score(y_test, y_pred)
+        
+        # Add model prefix to avoid conflicts
+        prefix = model_name.lower().replace(' ', '_')
+        live.log_metric(f"{prefix}_test_accuracy", test_accuracy)
+        live.log_metric(f"{prefix}_test_f1", test_f1)
+        
+        # Generate and save confusion matrix plot (for visualization folder only)
+        plt.figure(figsize=(4, 4))
+        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', 
+                    xticklabels=['Normal', 'Fraud'], 
+                    yticklabels=['Normal', 'Fraud'])
+        plt.xlabel('Predicted')
+        plt.ylabel('Actual')
+        plt.title(f'{model_name} Confusion Matrix')
+        plot_filename = f'visualizations/{prefix}_confusion_matrix.png'
+        plt.savefig(plot_filename, dpi=150, bbox_inches='tight')
+        plt.close()
+        # REMOVED: live.log_image() call
 
 # Step 3: Create comprehensive visualizations
 fig, axes = plt.subplots(2, 3, figsize=(18, 12))

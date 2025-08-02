@@ -65,8 +65,8 @@ stages:
       size: 1364713
     - path: src/model_training.py
       hash: md5
-      md5: 888079e8dfc9af072e3b3cf493ec098d
-      size: 4463
+      md5: 2960336e8bae437aba7aa48554617a16
+      size: 3694
     outs:
     - path: models/logistic_regression_model.pkl
       hash: md5
@@ -109,8 +109,8 @@ stages:
       size: 8235790
     - path: src/model_evaluation.py
       hash: md5
-      md5: 48bf1de9a225e3a23e75cabae4e88089
-      size: 7480
+      md5: d6aa1907560f356aff259180eb2d94b0
+      size: 8680
     outs:
     - path: models/detailed_evaluation.pkl
       hash: md5
