@@ -1,6 +1,3 @@
-# Simple Credit Card Fraud Detection - Data Preprocessing
-# Easy to understand version for beginners
-
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
@@ -14,7 +11,7 @@ data = pd.read_csv("data/raw/creditcard.csv")
 fraud_cases = data['Class'].sum()
 normal_cases = len(data) - fraud_cases
 
-# Step 3: Simple feature preparation
+# Step 3: feature preparation
 
 # Fix extreme values in Amount (cap at 99th percentile)
 amount_cap = data['Amount'].quantile(0.99)
@@ -56,7 +53,7 @@ smote = SMOTE(random_state=42)
 X_train_balanced, y_train_balanced = smote.fit_resample(X_train, y_train)
 
 # Step 7: Save the processed data
-# Save training data (balanced)
+# Save training data
 pd.DataFrame(X_train_balanced, columns=feature_columns).to_csv('data/processed/X_train.csv', index=False)
 pd.DataFrame(y_train_balanced, columns=['Class']).to_csv('data/processed/y_train.csv', index=False)
 

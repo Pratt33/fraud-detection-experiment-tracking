@@ -1,4 +1,0 @@
-[core]
-    remote = myazure
-['remote "myazure"']
-    url = azure://fdetectdvccont

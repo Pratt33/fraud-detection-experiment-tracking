@@ -1,6 +1,3 @@
-# Simple script to download credit card fraud dataset
-# Perfect for beginners learning fraud detection!
-
 import pandas as pd
 import kagglehub
 import os

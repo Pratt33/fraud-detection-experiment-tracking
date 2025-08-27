@@ -1,6 +1,3 @@
-# Simple Credit Card Fraud Detection - Model Evaluation
-# Detailed analysis of model performance
-
 import pandas as pd
 import numpy as np
 import pickle
@@ -50,7 +47,7 @@ with Live() as live:
         print(f"  False Negatives (Missed Fraud):   {fn:,}")
         print(f"  True Positives (Caught Fraud):    {tp:,}")
         
-        # Business Impact Metrics
+        # Metrics
         print(f"\nBusiness Impact:")
         if tp + fn > 0:  # Avoid division by zero
             fraud_catch_rate = tp / (tp + fn) * 100
@@ -84,9 +81,8 @@ with Live() as live:
         plot_filename = f'visualizations/{prefix}_confusion_matrix.png'
         plt.savefig(plot_filename, dpi=150, bbox_inches='tight')
         plt.close()
-        # REMOVED: live.log_image() call
 
-# Step 3: Create comprehensive visualizations
+# Step 3: visualizations
 fig, axes = plt.subplots(2, 3, figsize=(18, 12))
 fig.suptitle('Comprehensive Model Evaluation', fontsize=16, fontweight='bold')
 
@@ -192,7 +188,7 @@ for threshold in thresholds:
     
     print(f"   {threshold:.1f}   |    {tp:3d}     |     {fp:3d}     | {precision:.3f}   | {recall:.3f}")
 
-# Step 5: Save detailed results
+# Step 5: Save results
 # Create evaluation summary
 evaluation_summary = {}
 for model_name, model in models.items():
@@ -212,7 +208,7 @@ for model_name, model in models.items():
         'confusion_matrix': cm.tolist()
     }
 
-# Save detailed results
+# Save results
 with open('models/detailed_evaluation.pkl', 'wb') as f:
     pickle.dump(evaluation_summary, f)
 

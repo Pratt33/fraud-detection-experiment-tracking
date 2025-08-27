@@ -61,7 +61,7 @@ for model_name, model in models.items():
 best_model_name = max(results.keys(), key=lambda x: results[x]['f1_score'])
 print(f"Best model: {best_model_name} (F1-Score: {results[best_model_name]['f1_score']:.3f})")
 
-# Create a simple comparison chart
+# comparison chart
 model_names = list(results.keys())
 f1_scores = [results[name]['f1_score'] for name in model_names]
 precisions = [results[name]['precision'] for name in model_names]
