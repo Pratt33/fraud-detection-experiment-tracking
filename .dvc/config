@@ -2,3 +2,4 @@
     remote = myazure
 ['remote "myazure"']
     url = azure://fdetectdvccont
+    account_name = fdetectdvc
